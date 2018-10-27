@@ -31,11 +31,30 @@ class ContextGroup(models.Model):
         return perm in self.get_permissions()
 
 
-class BasicObjectBackend:
-    # See https://code.djangoproject.com/ticket/20218
-
+class BaseBackend:
     def authenticate(self, username, password):
         return None
+
+    def get_user_permissions(self, user, obj=None):
+        return set()
+
+    def get_group_permissions(self, user, obj=None):
+        return set()
+
+    def get_all_permissions(self, user, obj=None):
+        perms = set()
+        perms.update(self.get_user_permissions(user, obj=obj))
+        perms.update(self.get_group_permissions(user, obj=obj))
+        return perms
+
+    def has_perm(self, user, perm, obj=None):
+        # you may want to override this for performance reasons
+        perms = self.get_all_permissions(user, obj=obj)
+        return perm in perms
+
+
+class BasicObjectBackend(BaseBackend):
+    # See https://code.djangoproject.com/ticket/20218
 
     def get_user_permissions(self, user, obj=None):
         if obj is None:
@@ -58,10 +77,7 @@ class BasicObjectBackend:
         return user.has_perm(perm)
 
 
-class ContextPermissionBackend:
-    def authenticate(self, username, password):
-        return None
-
+class ContextPermissionBackend(BaseBackend):
     def get_group_permissions(self, user, obj=None):
         perms = set()
         if user.is_active and isinstance(obj, Context):
@@ -69,14 +85,6 @@ class ContextPermissionBackend:
             for group in groups:
                 perms.update(group.get_permissions())
         return perms
-
-    def get_all_permissions(self, user, obj=None):
-        return self.get_group_permissions(user, obj)
-
-    def has_perm(self, user, perm, obj=None):
-        if user.is_active and isinstance(obj, Context):
-            groups = ContextGroup.objects.filter(context=obj, users=user)
-            return any(group.has_perm(perm) for group in groups)
 
 
 class PermissionRequiredMixin(auth_mixins.PermissionRequiredMixin):
