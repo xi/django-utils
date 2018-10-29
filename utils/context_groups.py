@@ -27,9 +27,6 @@ class ContextGroup(models.Model):
         )
         return ['{}.{}'.format(ct, name) for ct, name in perms]
 
-    def has_perm(self, perm):
-        return perm in self.get_permissions()
-
 
 class BaseBackend:
     def authenticate(self, username, password):
