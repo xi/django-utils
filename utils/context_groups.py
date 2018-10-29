@@ -35,17 +35,11 @@ class BaseBackend:
     def authenticate(self, username, password):
         return None
 
-    def get_user_permissions(self, user, obj=None):
-        return set()
-
     def get_group_permissions(self, user, obj=None):
         return set()
 
     def get_all_permissions(self, user, obj=None):
-        perms = set()
-        perms.update(self.get_user_permissions(user, obj=obj))
-        perms.update(self.get_group_permissions(user, obj=obj))
-        return perms
+        return self.get_group_permissions(user, obj=obj)
 
     def has_perm(self, user, perm, obj=None):
         # you may want to override this for performance reasons
@@ -55,11 +49,6 @@ class BaseBackend:
 
 class BasicObjectBackend(BaseBackend):
     # See https://code.djangoproject.com/ticket/20218
-
-    def get_user_permissions(self, user, obj=None):
-        if obj is None:
-            return set()
-        return user.get_user_permissions()
 
     def get_group_permissions(self, user, obj=None):
         if obj is None:
