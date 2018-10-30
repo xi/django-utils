@@ -63,7 +63,24 @@ class BasicObjectBackend(BaseBackend):
         return user.has_perm(perm)
 
 
+def perm_cache(key):
+    def decorator(fn):
+        def wrapper(self, user, obj=None):
+            if obj:
+                perm_cache_name = '_{}:{}_perm_cache'.format(key, obj.pk)
+            else:
+                perm_cache_name = '_{}_perm_cache'.format(key)
+
+            if not hasattr(user, perm_cache_name):
+                perms = fn(self, user, obj=obj)
+                setattr(user, perm_cache_name, perms)
+            return getattr(user, perm_cache_name)
+        return wrapper
+    return decorator
+
+
 class ContextPermissionBackend(BaseBackend):
+    @perm_cache('context')
     def get_group_permissions(self, user, obj=None):
         perms = set()
         if user.is_active and isinstance(obj, Context):
