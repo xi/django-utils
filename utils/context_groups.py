@@ -29,7 +29,10 @@ class ContextGroup(models.Model):
 
 
 class BaseBackend:
-    def authenticate(self, username, password):
+    def authenticate(self, request, **kwargs):
+        return None
+
+    def get_user(self, user_id):
         return None
 
     def get_group_permissions(self, user, obj=None):
