@@ -1,6 +1,6 @@
 from django import forms
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 DATE_FORMAT = '%Y-%m-%d'
 
@@ -19,14 +19,14 @@ TIME_DEFAULTS = {
 
 class DateInput(forms.DateInput):
     def __init__(self, attrs={}, **kwargs):
-        defaults = TIME_DEFAULTS.copy()
+        defaults = DATE_DEFAULTS.copy()
         defaults.update(attrs)
         super().__init__(format=DATE_FORMAT, attrs=defaults, **kwargs)
 
 
 class TimeInput(forms.TimeInput):
     def __init__(self, attrs={}, **kwargs):
-        defaults = DATE_DEFAULTS.copy()
+        defaults = TIME_DEFAULTS.copy()
         defaults.update(attrs)
         super().__init__(format=TIME_FORMAT, attrs=defaults, **kwargs)
 
