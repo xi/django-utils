@@ -16,6 +16,7 @@ class Command(BaseCommand):
             'fake': False,
             'fake_initial': False,
             'run_syncdb': False,
+            'plan': False,
         }
         options.update(kwargs)
 
