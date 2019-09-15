@@ -1,5 +1,6 @@
 from django import template
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 register = template.Library()
 
@@ -17,10 +18,15 @@ def verbose_name(instance, field_name):
 @register.filter(name='display')
 def display(instance, field_name):
     getter = getattr(instance, 'get_{}_display'.format(field_name), None)
-    if getter:
-        return getter()
-    else:
-        return getattr(instance, field_name)
+    value = getter() if getter else getattr(instance, field_name)
+    if value is True:
+        return _('Yes')
+    elif value is False:
+        return _('No')
+    elif value is None or value == '':
+        return '—'
+    elif hasattr(value, 'all'):
+        return ', '.join(str(x) for x in value.all())
 
 
 @register.filter(name='fields')
