@@ -44,7 +44,8 @@ class DateTimeInput(forms.SplitDateTimeWidget):
             date_attrs=date_defaults,
             time_format=TIME_FORMAT,
             time_attrs=time_defaults,
-            **kwargs)
+            **kwargs
+        )
 
 
 class DateFormField(forms.DateField):

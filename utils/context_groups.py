@@ -22,8 +22,7 @@ class ContextGroup(models.Model):
 
     def get_permissions(self):
         perms = self.permissions.values_list(
-            'content_type__app_label',
-            'codename'
+            'content_type__app_label', 'codename'
         )
         return ['{}.{}'.format(ct, name) for ct, name in perms]
 
@@ -78,7 +77,9 @@ def perm_cache(key):
                 perms = fn(self, user, obj=obj)
                 setattr(user, perm_cache_name, perms)
             return getattr(user, perm_cache_name)
+
         return wrapper
+
     return decorator
 
 
