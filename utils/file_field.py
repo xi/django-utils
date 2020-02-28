@@ -23,6 +23,7 @@ class RestrictedFileField(forms.FileField):
             raise forms.ValidationError(
                 _('Filetype not supported.'), code='content_type'
             )
+        f.seek(0)
 
         return f
 
