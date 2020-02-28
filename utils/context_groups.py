@@ -1,5 +1,6 @@
 from django import template
 from django.db import models
+from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission
 from django.contrib.auth import mixins as auth_mixins
@@ -25,25 +26,6 @@ class ContextGroup(models.Model):
             'content_type__app_label', 'codename'
         )
         return ['{}.{}'.format(ct, name) for ct, name in perms]
-
-
-class BaseBackend:
-    def authenticate(self, request, **kwargs):
-        return None
-
-    def get_user(self, user_id):
-        return None
-
-    def get_group_permissions(self, user, obj=None):
-        return set()
-
-    def get_all_permissions(self, user, obj=None):
-        return self.get_group_permissions(user, obj=obj)
-
-    def has_perm(self, user, perm, obj=None):
-        # you may want to override this for performance reasons
-        perms = self.get_all_permissions(user, obj=obj)
-        return perm in perms
 
 
 class BasicObjectBackend(BaseBackend):
