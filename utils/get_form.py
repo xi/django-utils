@@ -9,6 +9,9 @@ class GetFormMixin(FormMixin):
             kwargs['data'] = self.request.GET
         return kwargs
 
+    def form_valid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
 
 class GetFormView(GetFormMixin, TemplateView):
     def get(self, request, *args, **kwargs):
@@ -17,10 +20,3 @@ class GetFormView(GetFormMixin, TemplateView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
-
-    def form_invalid(self, form):
-        context = self.get_context_data(form=form)
-        return self.render_to_response(context)
-
-    def form_valid(self, form):
-        raise NotImplementedError
